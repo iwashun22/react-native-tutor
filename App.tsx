@@ -3,7 +3,8 @@ import { Alert, BackHandler } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native/';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { Provider } from 'react-redux';
-import store from './src/redux/store';
+import { store, persistore } from './src/redux/store';
+import { PersistGate } from 'redux-persist/integration/react';
 import Home from './src/screen/Home';
 import MyCounter from './src/screen/MyCounter';
 
@@ -31,12 +32,14 @@ export default function App() {
   }, [])
   return (
     <Provider store={store}>
-    <NavigationContainer>
-      <Stack.Navigator initialRouteName='Home'>
-        <Stack.Screen name="Home" component={Home} navigationKey="Todo"/>
-        <Stack.Screen name="Counter" component={MyCounter}/>
-      </Stack.Navigator>
-    </NavigationContainer>
+    <PersistGate loading={null} persistor={persistore}>
+      <NavigationContainer>
+        <Stack.Navigator initialRouteName='Home'>
+          <Stack.Screen name="Home" component={Home} navigationKey="Todo"/>
+          <Stack.Screen name="Counter" component={MyCounter}/>
+        </Stack.Navigator>
+      </NavigationContainer>
+    </PersistGate>
     </Provider>
   );
 }
