@@ -5,8 +5,10 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { Provider } from 'react-redux';
 import { store, persistore } from './src/redux/store';
 import { PersistGate } from 'redux-persist/integration/react';
+
 import Home from './src/screen/Home';
 import MyCounter from './src/screen/MyCounter';
+import CustomNavbar from './src/screen/CustomNavbar';
 
 const Stack = createNativeStackNavigator();
 
@@ -35,8 +37,9 @@ export default function App() {
     <PersistGate loading={null} persistor={persistore}>
       <NavigationContainer>
         <Stack.Navigator initialRouteName='Home'>
-          <Stack.Screen name="Home" component={Home} navigationKey="Todo"/>
+          <Stack.Screen name="Home" component={Home}/>
           <Stack.Screen name="Counter" component={MyCounter}/>
+          <Stack.Screen name="Navbar" component={CustomNavbar}/>
         </Stack.Navigator>
       </NavigationContainer>
     </PersistGate>

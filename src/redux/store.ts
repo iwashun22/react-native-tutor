@@ -1,8 +1,9 @@
 import { configureStore, combineReducers } from '@reduxjs/toolkit';
-import countReducer from './reducers/countReducer';
 import thunk from 'redux-thunk';
 import { persistReducer, persistStore } from 'redux-persist';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+
+import countReducer from './reducers/countReducer';
 
 const rootReducer = combineReducers({
   count: countReducer,

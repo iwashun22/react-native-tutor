@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, View, Button, TextInput } from 'react-native';
 import { NavigationProp,  ParamListBase } from '@react-navigation/native';
+import AnimatedComponent from './components/Animation';
 
 type NavType = NavigationProp<ParamListBase>;
 
@@ -14,8 +15,10 @@ export default function Home({navigation}: {navigation: NavType}) {
   }, [user])
   const navigate = (destination: string) => () => navigation.navigate(destination)
   const navigateTodo = navigate("Counter");
+  const navigateCustomNav = navigate('Navbar');
   return (
     <View style={styles.container}>
+      <AnimatedComponent/>
       <Text>Open up App.tsx to start working on your app!</Text>
       <StatusBar style="auto" />
       <TextInput 
@@ -23,7 +26,8 @@ export default function Home({navigation}: {navigation: NavType}) {
         onChangeText={newText => setUser(newText)}
       />
       <Text style={styles.greetText}>Hello {user}!</Text>
-      <Button title="my todo lists" onPress={navigateTodo}/>
+      <Button title="my counter" onPress={navigateTodo}/>
+      <Button title="custom navbar" onPress={navigateCustomNav}/>
     </View>
   );
 }
