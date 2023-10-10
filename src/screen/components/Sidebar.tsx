@@ -4,9 +4,18 @@ import Icon, { IconName } from './Icon';
 
 import type { PageName } from '../CustomNavbar';
 
-export default function Sidebar({show, setPageTarget}: {
+const pages: Array<{ pageName: PageName, icon: IconName }> = [
+  { pageName: "one", icon: "home" },
+  { pageName: "two", icon: "bookmark" },
+  { pageName: "three", icon: "map" },
+  { pageName: "four", icon: "facebook" },
+]
+
+export default function Sidebar({show, touchDisabled, setPageTarget, currentPage}: {
   show: boolean, 
-  setPageTarget: React.Dispatch<React.SetStateAction<PageName>>
+  touchDisabled: boolean,
+  setPageTarget: React.Dispatch<React.SetStateAction<PageName>>,
+  currentPage: PageName
 }){
   const slideAnim = useRef(new Animated.ValueXY()).current;
   const hideLeft = -Dimensions.get('screen').width;
@@ -37,28 +46,35 @@ export default function Sidebar({show, setPageTarget}: {
     >
       <Text style={style.headerText}>sidebar</Text>
       <View>
-        <NavigateLink pageName="one" icon="home" navigate={setPageTarget}/>
-        <NavigateLink pageName="two" icon="bookmark" navigate={setPageTarget}/>
-        <NavigateLink pageName="three" icon="map" navigate={setPageTarget}/>
-        <NavigateLink pageName="four" icon="facebook" navigate={setPageTarget}/>
+        {/* <NavigateLink pageName="one" icon="home" touchDisabled={touchDisabled} navigate={setPageTarget}/>
+        <NavigateLink pageName="two" icon="bookmark" touchDisabled={touchDisabled} navigate={setPageTarget}/>
+        <NavigateLink pageName="three" icon="map" touchDisabled={touchDisabled} navigate={setPageTarget}/>
+        <NavigateLink pageName="four" icon="facebook" touchDisabled={touchDisabled} navigate={setPageTarget}/> */}
+        {pages.map(({ pageName, icon }, index) => (
+          <NavigateLink key={index} pageName={pageName} icon={icon} touchDisabled={touchDisabled} navigate={setPageTarget} highlight={pageName === currentPage}/>
+        ))}
       </View>
     </Animated.ScrollView>
   )
 }
 
-function NavigateLink({pageName, icon, navigate}: {
+function NavigateLink({pageName, icon, touchDisabled, navigate, highlight}: {
   pageName: PageName, 
   icon: IconName, 
-  navigate: React.Dispatch<React.SetStateAction<PageName>>}
+  touchDisabled: boolean,
+  navigate: React.Dispatch<React.SetStateAction<PageName>>,
+  highlight: boolean}
 ){
   return (
     <TouchableOpacity 
-      style={style.navLink} 
+      style={[style.navLink, highlight?style.highlight:null]} 
       onPress={() => {
-        navigate(pageName);
+        if(!touchDisabled) navigate(pageName);
       }}
     >
-      <Icon iconName={icon} size={30} color="blue" />
+      <View style={style.iconBox}>
+        <Icon iconName={icon} size={30} color="blue"/>
+      </View>
       <Text style={style.linkText}>{pageName}</Text>
     </TouchableOpacity>
   )
@@ -72,9 +88,8 @@ const style = StyleSheet.create({
     position: 'absolute',
     left: 0,
     top: 0,
-    backgroundColor: 'white',
+    backgroundColor: '#E6E6E6',
     zIndex: 100,
-    paddingLeft: 20
   },
   headerText: {
     fontSize: 20,
@@ -84,8 +99,21 @@ const style = StyleSheet.create({
   navLink: {
     display: 'flex',
     flexDirection: 'row',
+    paddingVertical: 10,
+    paddingLeft: 20,
+  },
+  highlight: {
+    backgroundColor: 'white'
+  },
+  iconBox: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center'
   },
   linkText: {
-    
+    fontSize: 18,
+    flex: 3,
+    textAlign: 'center',
+    marginRight: 20
   }
 })

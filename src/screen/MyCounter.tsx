@@ -1,14 +1,14 @@
-import React, { ReactElement } from 'react';
+import React, { ReactElement, useCallback } from 'react';
 import { View, Button, Text, StyleSheet } from 'react-native';
 import { useSelector, useDispatch } from 'react-redux';
 import { increment, decrement } from '../redux/reducers/countReducer';
 
 export default function MyTodo(props: any): ReactElement {
   const count = useSelector((state: any) => state.count.value);
-  const dispatch = useDispatch();
+  const dispatch = useCallback(useDispatch(), []);
 
-  const handleIncrease = () => dispatch(increment());
-  const handleDecrease = () => dispatch(decrement());
+  const handleIncrease = useCallback(() => dispatch(increment()), []);
+  const handleDecrease = useCallback(() => dispatch(decrement()), []);
   return (
     <View style={style.todoListContainer}>
       <Text style={style.textStyle}>Count: {count}</Text>

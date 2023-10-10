@@ -1,8 +1,10 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, View, Button, TextInput } from 'react-native';
 import { NavigationProp,  ParamListBase } from '@react-navigation/native';
 import AnimatedComponent from './components/Animation';
+
+import { PageName } from '../pageNames';
 
 type NavType = NavigationProp<ParamListBase>;
 
@@ -13,9 +15,9 @@ export default function Home({navigation}: {navigation: NavType}) {
       setUser("user")
     }
   }, [user])
-  const navigate = (destination: string) => () => navigation.navigate(destination)
-  const navigateTodo = navigate("Counter");
-  const navigateCustomNav = navigate('Navbar');
+  const navigate = useCallback((destination: PageName) => () => navigation.navigate(destination), []);
+  const navigateTodo = useCallback(navigate('Counter'), []);
+  const navigateCustomNav = useCallback(navigate('Navbar'), []);
   return (
     <View style={styles.container}>
       <AnimatedComponent/>

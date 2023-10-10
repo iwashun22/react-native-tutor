@@ -31,14 +31,20 @@ function displayPage({pageTarget, setPageTarget, toggleDummy, setToggle}: {
   toggleDummy: boolean,
   setToggle: React.Dispatch<React.SetStateAction<boolean>>
 }): ReactElement {
-  const [showSideBar, setSideBarState] = useState<boolean>(false);
+  const [sidebarState, setSideBarState] = useState<{show: boolean, touchDisabled: boolean}>({ show: false, touchDisabled: false});
   const page = pages[ pages.findIndex(({name}) => name === pageTarget) ];
   const toggle = useCallback(() => {
-    setSideBarState(state => !state)
+    setSideBarState(state => {
+      if(state.show) {
+        return { show: false, touchDisabled: true }
+      } 
+      else return { show: true, touchDisabled: false }
+    })
   }, []);
   let touchX: number;
+  // hide the sidebar when the page had changed
   useEffect(() => {
-    setSideBarState(false);
+    setSideBarState({ show: false, touchDisabled: true });
   }, [pageTarget])
   return (
     <View
@@ -46,11 +52,11 @@ function displayPage({pageTarget, setPageTarget, toggleDummy, setToggle}: {
       onTouchEnd={(e) => {
         if(touchX - e.nativeEvent.pageX > 20) {
           console.log("Swipe left");
-          if(showSideBar) toggle();
+          if(sidebarState) toggle();
         }
       }}
     >
-      <Sidebar show={showSideBar} setPageTarget={setPageTarget}/>
+      <Sidebar show={sidebarState.show} touchDisabled={sidebarState.touchDisabled} setPageTarget={setPageTarget} currentPage={pageTarget}/>
       <ScrollView 
         style={[
           style.fullscreenView, 

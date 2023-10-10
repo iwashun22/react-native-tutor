@@ -10,6 +10,8 @@ import Home from './src/screen/Home';
 import MyCounter from './src/screen/MyCounter';
 import CustomNavbar from './src/screen/CustomNavbar';
 
+import { pageList as p } from './src/pageNames';
+
 const Stack = createNativeStackNavigator();
 
 export default function App() {
@@ -36,10 +38,10 @@ export default function App() {
     <Provider store={store}>
     <PersistGate loading={null} persistor={persistore}>
       <NavigationContainer>
-        <Stack.Navigator initialRouteName='Home'>
-          <Stack.Screen name="Home" component={Home}/>
-          <Stack.Screen name="Counter" component={MyCounter}/>
-          <Stack.Screen name="Navbar" component={CustomNavbar}/>
+        <Stack.Navigator initialRouteName={p.home}>
+          <Stack.Screen name={p.home} component={Home}/>
+          <Stack.Screen name={p.counter} component={MyCounter}/>
+          <Stack.Screen name={p.navbar} component={CustomNavbar}/>
         </Stack.Navigator>
       </NavigationContainer>
     </PersistGate>
