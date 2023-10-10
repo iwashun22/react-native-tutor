@@ -1,41 +1,69 @@
-import React, { ReactElement, useState } from 'react';
+import React, { ReactElement, useEffect, useCallback, useState } from 'react';
 import { View, StyleSheet, Dimensions, Button, Text, ScrollView } from 'react-native';
 
-const pages: Array<{name: string, background: string, component: null | ReactElement}> = [
-  { name: "one", background: "green", component: null },
-  { name: "two", background: "blue", component: null },
-  { name: "three", background: "red", component: null },
-  { name: "four", background: "yellow", component: null },
-  { name: "five", background: "orange", component: null }
-]
+import { NavbarButton } from './components/NavbarButton';
+import Sidebar from './components/Sidebar';
+
+export const pageNameArr = ["one", "two", "three", "four", "five"] as const;
+export type PageName = typeof pageNameArr[number];
+
+const pages: ReadonlyArray<{name: PageName, background: string, Component: () => React.JSX.Element}> = [
+  { name: "one", background: "green", Component: One },
+  { name: "two", background: "blue", Component: () => <></> },
+  { name: "three", background: "red", Component: () => <></> },
+  { name: "four", background: "yellow", Component: () => <></> },
+  { name: "five", background: "orange", Component: () => <></> }
+];
 
 export default function CustomNavbar(): ReactElement {
-  const [pageTarget, setPageTarget] = useState("three");
+  const [pageTarget, setPageTarget] = useState<PageName>("one");
   const [toggleDummy, setToggle] = useState(false);
   return (
     <View style={{ height: '100%' }}>
-      { pages.map((page) => {
-        if(page.name === pageTarget) return (
-          // <ScrollView>
-          <ScrollView 
-            style={[
-              style.fullscreenView, 
-              { backgroundColor: page.background}
-            ]}
-            key={page.name}
-          >
-            <Text style={{color: 'white', fontSize: 28}}>{page.name}</Text>
-            
-              { page.component }
-            
-            <Button title="toggle dummy" onPress={() => setToggle(!toggleDummy)}/>
-              { toggleDummy && <Dummy/> }
-          </ScrollView>
-          // </ScrollView>
-        ) 
-        return null
+      { displayPage({ pageTarget, setPageTarget, toggleDummy, setToggle}) }
+    </View>
+  )
+}
+
+function displayPage({pageTarget, setPageTarget, toggleDummy, setToggle}: {
+  pageTarget: PageName,
+  setPageTarget: React.Dispatch<React.SetStateAction<PageName>>,
+  toggleDummy: boolean,
+  setToggle: React.Dispatch<React.SetStateAction<boolean>>
+}): ReactElement {
+  const [showSideBar, setSideBarState] = useState<boolean>(false);
+  const page = pages[ pages.findIndex(({name}) => name === pageTarget) ];
+  const toggle = useCallback(() => {
+    setSideBarState(state => !state)
+  }, []);
+  let touchX: number;
+  useEffect(() => {
+    setSideBarState(false);
+  }, [pageTarget])
+  return (
+    <View
+      onTouchStart={(e) => { touchX = e.nativeEvent.pageX }}
+      onTouchEnd={(e) => {
+        if(touchX - e.nativeEvent.pageX > 20) {
+          console.log("Swipe left");
+          if(showSideBar) toggle();
         }
-      ) }
+      }}
+    >
+      <Sidebar show={showSideBar} setPageTarget={setPageTarget}/>
+      <ScrollView 
+        style={[
+          style.fullscreenView, 
+          { backgroundColor: page.background}
+        ]}
+        key={page.name}
+      >
+        <NavbarButton toggleSideBar={toggle}/>
+        <Text style={{color: 'white', fontSize: 28}}>{page.name}</Text>
+          <page.Component/>
+        <Button title="toggle dummy" onPress={() => setToggle(!toggleDummy)}/>
+          { toggleDummy && <Dummy/> }
+      </ScrollView>
     </View>
   )
 }
@@ -43,7 +71,7 @@ export default function CustomNavbar(): ReactElement {
 const style = StyleSheet.create({
   fullscreenView: {
     width: Dimensions.get('screen').width,
-    minHeight: '100%'
+    minHeight: Dimensions.get('screen').height
   }
 })
 
@@ -62,4 +90,20 @@ const Dummy: () => React.JSX.Element[] = () => {
     }
   }
   return arr.map(t => <t.component key={t.key}/>);
+}
+
+
+// ####### CHILD COMPONENTS
+function One() {
+  return (
+    <View>
+    </View>
+  )
+}
+
+function Two() {
+  return (
+    <View>
+    </View>
+  )
 }

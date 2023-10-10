@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import { Alert, BackHandler } from 'react-native';
-import { NavigationContainer } from '@react-navigation/native/';
+import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { Provider } from 'react-redux';
 import { store, persistore } from './src/redux/store';
