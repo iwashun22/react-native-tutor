@@ -2,7 +2,7 @@ import React, { useEffect, useState, useCallback } from 'react';
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, View, Button, TextInput } from 'react-native';
 import { NavigationProp,  ParamListBase } from '@react-navigation/native';
-import AnimatedComponent from './components/Animation';
+import AnimatedComponent from '../components/Animation';
 
 import { PageName } from '../pageNames';
 
@@ -18,6 +18,8 @@ export default function Home({navigation}: {navigation: NavType}) {
   const navigate = useCallback((destination: PageName) => () => navigation.navigate(destination), []);
   const navigateTodo = useCallback(navigate('Counter'), []);
   const navigateCustomNav = useCallback(navigate('Navbar'), []);
+  const navigateMyFlatList = useCallback(navigate('Flatlist'), []);
+  const navigateMyTodo = useCallback(navigate('MyTodo'), []);
   return (
     <View style={styles.container}>
       <AnimatedComponent/>
@@ -30,6 +32,8 @@ export default function Home({navigation}: {navigation: NavType}) {
       <Text style={styles.greetText}>Hello {user}!</Text>
       <Button title="my counter" onPress={navigateTodo}/>
       <Button title="custom navbar" onPress={navigateCustomNav}/>
+      <Button title="flat list" onPress={navigateMyFlatList}/>
+      <Button title="my todo" onPress={navigateMyTodo}/>
     </View>
   );
 }

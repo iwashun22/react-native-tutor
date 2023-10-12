@@ -2,7 +2,7 @@ import React, { useRef, useEffect, useCallback } from 'react';
 import { Text, StyleSheet, Dimensions, Animated, TouchableOpacity, View } from 'react-native';
 import Icon, { IconName } from './Icon';
 
-import type { PageName } from '../CustomNavbar';
+import type { PageName } from '../screen/CustomNavbar';
 
 const pages: Array<{ pageName: PageName, icon: IconName }> = [
   { pageName: "one", icon: "home" },

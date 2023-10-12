@@ -1,8 +1,8 @@
 import React, { ReactElement, useEffect, useCallback, useState } from 'react';
 import { View, StyleSheet, Dimensions, Button, Text, ScrollView } from 'react-native';
 
-import { NavbarButton } from './components/NavbarButton';
-import Sidebar from './components/Sidebar';
+import { NavbarButton } from '../components/NavbarButton';
+import Sidebar from '../components/Sidebar';
 
 export const pageNameArr = ["one", "two", "three", "four", "five"] as const;
 export type PageName = typeof pageNameArr[number];
