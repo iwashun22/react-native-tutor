@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { SafeAreaView, Button, View, Text, TouchableOpacity, FlatList, StyleSheet } from 'react-native';
 
-type ItemListType = Array<{name: string, key: string}>
+type ItemListType = Array<{name: string, key: string}>;
 
 const itemList: ItemListType = [
   { name: 'Basketball', key: '1' },
@@ -9,7 +9,7 @@ const itemList: ItemListType = [
   { name: 'Lighter', key: '3' },
   { name: 'Icecream', key: '4' },
   { name: 'Iphone', key: '5' }
-] as const;
+];
 
 export default function MyFlatList() {
   const [items, setItems] = useState<ItemListType>(itemList);
@@ -32,7 +32,7 @@ export default function MyFlatList() {
           >The list is empty</Text>
         }
         renderItem={({item}) => (
-          <View style={style.itemBox} key={item.key}>
+          <View style={styles.itemBox} key={item.key}>
             <TouchableOpacity 
               onPress={e => {
                 setItems(items => items.filter(i => i.key !== item.key))
@@ -63,7 +63,7 @@ export default function MyFlatList() {
   )
 }
 
-const style = StyleSheet.create({
+const styles = StyleSheet.create({
   itemBox: {
     flex: 1/2,
     backgroundColor: 'yellow',

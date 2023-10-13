@@ -1,6 +1,6 @@
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useEffect, useState, useCallback, ReactElement } from 'react';
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View, Button, TextInput } from 'react-native';
+import { StyleSheet, Text, View, TouchableOpacity, TextInput, FlatList } from 'react-native';
 import { NavigationProp,  ParamListBase } from '@react-navigation/native';
 import AnimatedComponent from '../components/Animation';
 
@@ -12,7 +12,7 @@ export default function Home({navigation}: {navigation: NavType}) {
   const [user, setUser] = useState("User");
   useEffect(() => {
     if(!user) {
-      setUser("user")
+      setUser("User")
     }
   }, [user])
   const navigate = useCallback((destination: PageName) => () => navigation.navigate(destination), []);
@@ -23,19 +23,54 @@ export default function Home({navigation}: {navigation: NavType}) {
   return (
     <View style={styles.container}>
       <AnimatedComponent/>
-      <Text>Open up App.tsx to start working on your app!</Text>
       <StatusBar style="auto" />
+      <View style={{
+        flex: 1/6,
+        justifyContent: 'flex-end',
+        marginBottom: 40
+      }}>
       <TextInput 
         placeholder='type username'
         onChangeText={newText => setUser(newText)}
-      />
+        />
       <Text style={styles.greetText}>Hello {user}!</Text>
-      <Button title="my counter" onPress={navigateTodo}/>
-      <Button title="custom navbar" onPress={navigateCustomNav}/>
-      <Button title="flat list" onPress={navigateMyFlatList}/>
-      <Button title="my todo" onPress={navigateMyTodo}/>
+      </View>
+      <View
+        style={{
+          flex: 1/2,
+          maxHeight: 300,
+          padding: 20,
+          backgroundColor: '#E8A737',
+        }}
+      >
+        <MyCustomButtonList items={[
+          { title: "my counter", navigation: navigateTodo },
+          { title: "custom navbar", navigation: navigateCustomNav },
+          { title: "flat list", navigation: navigateMyFlatList },
+          { title: "my todos", navigation: navigateMyTodo },
+        ]}/>
+      </View>
     </View>
   );
+}
+
+function MyCustomButtonList({ items }: { 
+  items: Array<{ title: string, navigation: () => void }>
+}): ReactElement {
+  return (
+    <FlatList 
+      data={items}
+      keyExtractor={item => item.title}
+      contentContainerStyle={{ 
+        backgroundColor: 'yellow',
+      }}
+      renderItem={({item}) => (
+        <TouchableOpacity style={styles.navigateLinkButton} onPress={item.  navigation}>
+          <Text style={styles.navigateLinkText}>{item.title}</Text>
+        </TouchableOpacity>
+      )}
+    />
+  )
 }
 
 const styles = StyleSheet.create({
@@ -48,5 +83,17 @@ const styles = StyleSheet.create({
   greetText: {
     color: "orange",
     fontSize: 29,
+  },
+  navigateLinkButton: {
+    backgroundColor: 'blue',
+    margin: 10,
+    padding: 8,
+    borderRadius: 6,
+  },
+  navigateLinkText: {
+    color: 'white',
+    textAlign: 'center',
+    fontSize: 16,
+    textTransform: 'uppercase'
   }
 });

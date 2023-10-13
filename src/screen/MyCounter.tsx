@@ -10,9 +10,9 @@ export default function MyTodo(props: any): ReactElement {
   const handleIncrease = useCallback(() => dispatch(increment()), []);
   const handleDecrease = useCallback(() => dispatch(decrement()), []);
   return (
-    <View style={style.todoListContainer}>
-      <Text style={style.textStyle}>Count: {count}</Text>
-      <View style={style.buttonContainer}>
+    <View style={styles.todoListContainer}>
+      <Text style={styles.textStyle}>Count: {count}</Text>
+      <View style={styles.buttonContainer}>
         <Button title="increase" onPress={handleIncrease} color="#27C343"/>
         <Button title="decrease" onPress={handleDecrease} color="#C33427"/>
       </View>
@@ -20,7 +20,7 @@ export default function MyTodo(props: any): ReactElement {
   );
 }
 
-const style = StyleSheet.create({
+const styles = StyleSheet.create({
   todoListContainer: {
     flex: 1,
     display: 'flex',

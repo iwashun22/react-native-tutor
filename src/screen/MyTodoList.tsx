@@ -1,13 +1,13 @@
-import React, { ReactElement, useCallback, useState, useRef } from 'react';
+import React, { ReactElement, useCallback, useState } from 'react';
 import { 
-  SafeAreaView, Text, Button, 
-  View, StyleSheet, Pressable, 
+  SafeAreaView, Text, 
+  View, StyleSheet, FlatList, 
   Modal, Alert, TextInput, TouchableOpacity
 } from 'react-native';
 import Icon from '../components/Icon';
-import { MaterialIcons } from '@expo/vector-icons';
+import TodoBox from '../components/TodoBox';
 
-import { addTodo, removeTodo, toggleTodoComplete, Task } from '../redux/reducers/todoReducer';
+import { addTodo, Task } from '../redux/reducers/todoReducer';
 import { RootState } from '../redux/store';
 import { useSelector, useDispatch } from 'react-redux';
 
@@ -19,60 +19,51 @@ export default function MyTodoList() {
   const add = useCallback((task: Task) => {
     dispatch(addTodo(task));
   }, [])
-  const deleteTodo = useCallback((id: string) => {
-    dispatch(removeTodo({id}));
-  }, [])
-  const toggleComplete = useCallback((id: string) => {
-    dispatch(toggleTodoComplete({id}));
-  }, []);
-  const ToggleButton = useCallback((complete: boolean, id: string) => {
-    let title = "done";
-    if(complete) {
-      title = "undo"
+  const sortList: () => Array<Task> = useCallback(() => {
+    const listMap = new Map<boolean, Array<Task>>();
+    todoList.forEach(todo => {
+      const arr = listMap.get(todo.complete) || [];
+      arr.push(todo);
+      listMap.set(todo.complete, arr);
+    })
+    function sortByTime(a: Task, b: Task) {
+      const aTime = (new Date(a.createdAt)).getTime(),
+      bTime = (new Date(b.createdAt)).getTime()
+      return aTime - bTime;
     }
-    return (
-      <Button title={title} onPress={() => toggleComplete(id)}/>
-    )
-  }, [])
+    const completedTasks = listMap.get(true)?.sort(sortByTime) || [],
+    incompleteTasks = listMap.get(false)?.sort(sortByTime) || [];
+    return incompleteTasks.concat(completedTasks);
+  }, [todoList])
   return (
     <SafeAreaView style={{height: '100%'}}>
-      <Text style={style.headerText}>My Todos</Text>
-      {todoList.map(todo => (
-        <View key={todo.id}>
-          <Text>id: {todo.id}</Text>
-          <Text>task: {todo.taskName}</Text>
-          <Text>is complete: {todo.complete.toString()}</Text>
-          <Text>created at: {formatDate(todo.createdAt)}</Text>
-          {ToggleButton(todo.complete, todo.id)}
-          <Button title="delete" onPress={() => deleteTodo(todo.id)}/>
-        </View>
-      ))}
+      <Text style={styles.headerText}>My Todos</Text>
+      <FlatList
+        data={sortList()}
+        keyExtractor={(item) => item.id}
+        renderItem={({ item }) => <TodoBox item={item}/>}
+        /* this is a blank space for scrolling */
+        ListFooterComponent={() => (
+          <View style={{
+            width: '100%',
+            height: 100,
+            backgroundColor: 'none'
+          }}></View>
+        )}
+      />
       <Form isVisible={formIsVisible} add={add} setFormVisibility={setFormVisibility}/>
       { !formIsVisible && (
         <TouchableOpacity
-        style={style.addIcon}
+        style={styles.addIcon}
         onPress={() => setFormVisibility(true)}
         >
-          <Icon iconName="plus" color="#01BD1A" size={addIconSize}/>
+          <Icon iconName="plus" color="#45C13A" size={addIconSize}/>
         </TouchableOpacity>
       ) }
     </SafeAreaView>
   )
 }
 
-function formatDate(date: Date) {
-  date = new Date(date);
-  const getDate = new Intl.DateTimeFormat().format(date);
-  const { hours, minutes } = {
-    hours: date.getHours(),
-    minutes: date.getMinutes()
-  };
-  const fixedHours = hours <= 12 ? hours: hours - 12;
-  const suffix = hours <= 12 ? 'am':'pm';
-  return `${getDate} ${fixedHours}:${minutes}${suffix}`;
-}
-
-// TODO: create form JSX
 function Form({ isVisible, add, setFormVisibility }: {
   isVisible: boolean,
   add: (task: Task) => void,
@@ -101,33 +92,33 @@ function Form({ isVisible, add, setFormVisibility }: {
         setTaskName("");
       }}
     >
-      <View style={style.formBackgroundView}>
-      <View style={style.formContainer}>
+      <View style={styles.formBackgroundView}>
+      <View style={styles.formContainer}>
         <TextInput
           onChangeText={setTaskName}
           value={taskName}
           placeholder='task name'
           placeholderTextColor="#949494"
-          style={style.textInputStyle}
+          style={styles.textInputStyle}
           multiline={true}
           autoFocus
         />
-        <View style={style.buttonContainer}>
+        <View style={styles.buttonContainer}>
           <TouchableOpacity
             style={[
-              style.relative,
+              styles.relative,
               { left: 10 }
             ]}
             onPress={() => setFormVisibility(false)}
             >
             <Text style={[
-              style.textButton,
+              styles.textButton,
               { color: 'red' }
             ]}>cancel</Text>
           </TouchableOpacity>
           <TouchableOpacity 
             style={[
-              style.relative,
+              styles.relative,
               { right: 10 }
             ]}
             onPress={() => {
@@ -138,7 +129,7 @@ function Form({ isVisible, add, setFormVisibility }: {
             }}
           >
               <Text style={[
-                style.textButton,
+                styles.textButton,
                 { color: 'green' }
               ]}>add</Text>
           </TouchableOpacity>
@@ -151,7 +142,7 @@ function Form({ isVisible, add, setFormVisibility }: {
 
 const addIconSize = 50;
 
-const style = StyleSheet.create({
+const styles = StyleSheet.create({
   headerText: {
     fontSize: 20,
     textAlign: 'center',
@@ -159,13 +150,15 @@ const style = StyleSheet.create({
   },
   addIcon: {
     position: 'absolute',
-    left: '50%',
+    right: 30,
     bottom: 30,
-    transform: [{translateX: -(addIconSize/2)}],
+    backgroundColor: '#BBF2B6',
+    borderRadius: 20,
+    padding: 20,
     zIndex: 100
   },
   formBackgroundView: {
-    backgroundColor: 'rgba(30, 30, 30, 0.6)#4F4F4F',
+    backgroundColor: 'rgba(30, 30, 30, 0.6)',
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center'
@@ -184,6 +177,7 @@ const style = StyleSheet.create({
     borderBottomWidth: 2,
     borderBottomColor: 'black',
     marginBottom: 40,
+    paddingHorizontal: 8
   },
   buttonContainer:  {
     width: '90%',
