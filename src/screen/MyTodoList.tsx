@@ -7,7 +7,7 @@ import {
 import Icon from '../components/Icon';
 import TodoBox from '../components/TodoBox';
 
-import { addTodo, Task } from '../redux/reducers/todoReducer';
+import { addTodo, toggleTodoComplete, removeTodo, Task } from '../redux/reducers/todoReducer';
 import { RootState } from '../redux/store';
 import { useSelector, useDispatch } from 'react-redux';
 
@@ -18,7 +18,13 @@ export default function MyTodoList() {
 
   const add = useCallback((task: Task) => {
     dispatch(addTodo(task));
-  }, [])
+  }, []);
+  const deleteTodo = useCallback((task: Task) => {
+    dispatch(removeTodo({id: task.id}));
+  }, []);
+  const toggleComplete = useCallback((task: Task) => {
+    dispatch(toggleTodoComplete({id: task.id}));
+  }, []);
   const sortList: () => Array<Task> = useCallback(() => {
     const listMap = new Map<boolean, Array<Task>>();
     todoList.forEach(todo => {
@@ -34,14 +40,20 @@ export default function MyTodoList() {
     const completedTasks = listMap.get(true)?.sort(sortByTime) || [],
     incompleteTasks = listMap.get(false)?.sort(sortByTime) || [];
     return incompleteTasks.concat(completedTasks);
-  }, [todoList])
+  }, [todoList]);
   return (
     <SafeAreaView style={{height: '100%'}}>
       <Text style={styles.headerText}>My Todos</Text>
       <FlatList
         data={sortList()}
         keyExtractor={(item) => item.id}
-        renderItem={({ item }) => <TodoBox item={item}/>}
+        renderItem={({ item }) => (
+          <TodoBox 
+            item={item}
+            deleteTodo={deleteTodo}
+            toggleComplete={toggleComplete}
+          />
+        )}
         /* this is a blank space for scrolling */
         ListFooterComponent={() => (
           <View style={{

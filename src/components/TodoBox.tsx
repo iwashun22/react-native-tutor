@@ -1,9 +1,7 @@
-import React, { ReactElement, useCallback } from 'react';
+import React, { ReactElement } from 'react';
 import { View, StyleSheet, Text, Alert, TouchableOpacity } from 'react-native';
-import { toggleTodoComplete, removeTodo, Task } from '../redux/reducers/todoReducer';
+import type { Task } from '../redux/reducers/todoReducer';
 import { MaterialIcons } from '@expo/vector-icons';
-
-import { useDispatch } from 'react-redux';
 
 type IconName = keyof typeof MaterialIcons.glyphMap;
 const checkBox: {checked: IconName, empty: IconName} = {
@@ -15,23 +13,18 @@ const colorType = {
   cancel: '#CB2D2D'
 }
 
-function TodoBox({item}: {
-  item: Task
+function TodoBox<Item extends Task>({item, deleteTodo, toggleComplete }: {
+  item: Item,
+  deleteTodo: (item: Item) => void,
+  toggleComplete: (item: Item) => void,
 }): ReactElement {
-  const dispatch = useCallback(useDispatch(), []);
-  const deleteTodo = useCallback((id: string) => {
-    dispatch(removeTodo({id}));
-  }, [])
-  const toggleComplete = useCallback((id: string) => {
-    dispatch(toggleTodoComplete({id}));
-  }, []);
   return (
     <View style={styles.containerBox}>
       <View style={{
         margin: 5,
       }}>
         <TouchableOpacity onPress={() => {
-          toggleComplete(item.id);
+          toggleComplete(item);
         }}>
           <MaterialIcons 
             name={item.complete ? checkBox.checked : checkBox.empty}
@@ -47,7 +40,7 @@ function TodoBox({item}: {
           </View>
           <View style={styles.buttonContainerView}>
             <TouchableOpacity onPress={() => {
-              toggleComplete(item.id);
+              toggleComplete(item);
             }}>
               {
                 item.complete ?
@@ -74,7 +67,7 @@ function TodoBox({item}: {
                   {
                     text: 'yes',
                     onPress: () => {
-                      deleteTodo(item.id);
+                      deleteTodo(item);
                     }
                   }
                 ]
