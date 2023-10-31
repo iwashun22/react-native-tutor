@@ -4,6 +4,7 @@ export const pageList = {
   navbar: "Navbar",
   flatlist: "Flatlist",
   todolist: "MyTodo",
+  flexbox: "FlexBox"
 } as const
 
 type keys = keyof typeof pageList;

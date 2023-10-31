@@ -20,6 +20,7 @@ export default function Home({navigation}: {navigation: NavType}) {
   const navigateCustomNav = useCallback(navigate('Navbar'), []);
   const navigateMyFlatList = useCallback(navigate('Flatlist'), []);
   const navigateMyTodo = useCallback(navigate('MyTodo'), []);
+  const navigateFlexBox = useCallback(navigate('FlexBox'), []);
   return (
     <View style={styles.container}>
       <AnimatedComponent/>
@@ -48,6 +49,7 @@ export default function Home({navigation}: {navigation: NavType}) {
           { title: "custom navbar", navigation: navigateCustomNav },
           { title: "flat list", navigation: navigateMyFlatList },
           { title: "my todos", navigation: navigateMyTodo },
+          { title: "flex box", navigation: navigateFlexBox },
         ]}/>
       </View>
     </View>

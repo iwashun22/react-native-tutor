@@ -2,7 +2,8 @@ import React, { ReactElement, useCallback, useState } from 'react';
 import { 
   SafeAreaView, Text, 
   View, StyleSheet, FlatList, 
-  Modal, Alert, TextInput, TouchableOpacity
+  Modal, Alert, TextInput, TouchableOpacity,
+  TouchableWithoutFeedback, Keyboard
 } from 'react-native';
 import Icon from '../components/Icon';
 import TodoBox from '../components/TodoBox';
@@ -92,6 +93,10 @@ function Form({ isVisible, add, setFormVisibility }: {
     })
   }, [])
   return (
+    <TouchableWithoutFeedback onPress={() => {
+      // memo: dismiss keyboard when touch nothing 
+      Keyboard.dismiss();
+    }}>
     <Modal
       animationType='fade'
       transparent={true}
@@ -149,6 +154,7 @@ function Form({ isVisible, add, setFormVisibility }: {
       </View>
       </View>
     </Modal>
+    </TouchableWithoutFeedback>
   )
 }
 

@@ -11,6 +11,7 @@ import MyCounter from './src/screen/MyCounter';
 import CustomNavbar from './src/screen/CustomNavbar';
 import MyFlatList from './src/screen/MyFlatList';
 import MyTodoList from './src/screen/MyTodoList';
+import FlexBox from './src/screen/Flexbox';
 
 import { pageList as p } from './src/pageNames';
 
@@ -46,6 +47,7 @@ export default function App() {
           <Stack.Screen name={p.navbar} component={CustomNavbar}/>
           <Stack.Screen name={p.flatlist} component={MyFlatList}/>
           <Stack.Screen name={p.todolist} component={MyTodoList}/>
+          <Stack.Screen name={p.flexbox} component={FlexBox}/>
         </Stack.Navigator>
       </NavigationContainer>
     </PersistGate>
