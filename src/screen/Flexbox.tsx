@@ -10,6 +10,7 @@ function FlexBox(): ReactElement {
       </View>
       <Text style={styles.header}>flexed container</Text>
       <View style={styles.containerFlex}>
+        {/* Flexed item fills the rest of the space */}
         {/* When the container is flexed the children will also be flexed automatically */}
         <Items/>
       </View>
@@ -45,12 +46,12 @@ const styles = StyleSheet.create({
     paddingTop: 40,
     backgroundColor: '#777',
     flexDirection: 'row',
-    justifyContent: 'center'
+    justifyContent: 'space-around'
   },
   containerFlex: {
+    flex: 1,
     paddingTop: 40,
     backgroundColor: '#ddd',
-    flex: 1,
     flexDirection: 'row'
   },
   box: {
